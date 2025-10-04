@@ -1,0 +1,62 @@
+services:
+  airflow:
+    image: apache/airflow:2.10.0
+    container_name: telco-churn-airflow
+    user: "${AIRFLOW_UID:-50000}:0"
+    environment:
+      # Install Python packages
+      - _PIP_ADDITIONAL_REQUIREMENTS=pandas>=2.0.0 numpy>=1.24.0 scikit-learn>=1.3.0 joblib>=1.3.0
+      # Use SequentialExecutor with SQLite backend
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db
+
+      # Disable loading example DAGs
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=False
+
+      # Create default admin user
+      - _AIRFLOW_WWW_USER_CREATE=True
+      - _AIRFLOW_WWW_USER_USERNAME=admin
+      - _AIRFLOW_WWW_USER_PASSWORD=admin
+
+      # Additional configurations
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=True
+      - AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG=1
+      - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
+
+    ports:
+      - "8080:8080"
+
+    volumes:
+      # Mount DAGs directory
+      - ./dags:/opt/airflow/dags
+
+      # Mount data directory
+      - ../data:/opt/airflow/data
+
+      # Mount src directory for Python modules
+      - ../src:/opt/airflow/src
+
+      # Mount config directory
+      - ../config:/opt/airflow/config
+
+      # Mount logs directory
+      - ./logs:/opt/airflow/logs
+
+      # Mount plugins directory
+      - ./plugins:/opt/airflow/plugins
+
+    command: standalone
+
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+    restart: unless-stopped
+
+networks:
+  default:
+    name: airflow-network

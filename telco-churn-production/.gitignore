@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+build/
+dist/
+*.egg-info/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.bak
+*.tmp
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Machine Learning
+data/
+models/
+logs/
+artifacts/
+mlruns/
+*.pkl
+*.joblib
+*.h5
+*.onnx
+*.pt
+*.tf
+*.bin
+results/
+output/

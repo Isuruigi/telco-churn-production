@@ -1,0 +1,36 @@
+# Airflow Settings for Telco Churn Pipeline
+
+# File Paths (within the Airflow container)
+paths:
+  raw_data: "/opt/airflow/data/raw/telco_churn.csv"
+  processed_data: "/opt/airflow/data/processed/telco_churn_processed.csv"
+  engineered_data: "/opt/airflow/data/processed/telco_churn_engineered.csv"
+  model_dir: "/opt/airflow/src/models"
+  predictions_dir: "/opt/airflow/data/predictions"
+
+# Model Parameters
+model:
+  type: "RandomForestClassifier"
+  params:
+    n_estimators: 100
+    max_depth: 10
+    random_state: 42
+    n_jobs: -1
+    class_weight: "balanced"
+
+# DAG Settings
+dag:
+  dag_id: "telco_churn_ml_pipeline"
+  owner: "airflow"
+  depends_on_past: False
+  email_on_failure: False
+  email_on_retry: False
+  retries: 1
+  retry_delay_minutes: 5
+  schedule_interval_days: 7
+  start_date: "2024-01-01"
+  catchup: False
+  tags:
+    - "ml"
+    - "churn"
+    - "telco"

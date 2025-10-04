@@ -1,0 +1,23 @@
+# This file contains the development dependencies for the project.
+# It should be used to set up a development environment.
+
+# Include the main project dependencies
+-r requirements.txt
+
+# -- Development Tools --
+
+# For code coverage reports
+pytest-cov==5.0.0
+
+# For additional static analysis and linting
+pylint==3.2.5
+
+# For static type checking
+mypy==1.10.0
+
+# For building documentation
+Sphinx==7.4.7
+myst-parser==3.0.1
+
+# For pre-commit hooks
+pre-commit==3.7.1
