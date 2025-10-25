@@ -1,19 +1,32 @@
-# Telco Customer Churn Prediction - ML Pipeline
+# Telco Customer Churn Prediction - Complete ML & Streaming Pipeline
 
 ## 📋 Project Overview
 
-This project provides a comprehensive, end-to-end machine learning system for predicting customer churn in a telecommunications company. The system implements multiple ML approaches including Scikit-learn, PySpark, and MLflow tracking, with full orchestration via Apache Airflow.
+This repository contains two integrated projects that form a complete end-to-end machine learning and real-time streaming system for predicting customer churn in telecommunications:
 
-**Business Problem**: Customer churn costs telecom companies significant revenue. Acquiring new customers is 5-7x more expensive than retaining existing ones. This ML system enables proactive identification of at-risk customers for targeted retention campaigns.
+### **Mini Project 1: ML Pipeline & Model Development**
+A comprehensive machine learning system implementing multiple ML approaches (Scikit-learn, PySpark, MLflow) with full orchestration via Apache Airflow.
+
+### **Mini Project 2: Kafka Streaming Pipeline**
+A production-ready real-time streaming system using Apache Kafka for continuous churn prediction, supporting both streaming and batch processing modes with ML model integration.
+
+**Business Problem**: Customer churn costs telecom companies significant revenue. Acquiring new customers is 5-7x more expensive than retaining existing ones. This integrated system enables both model development/training AND real-time deployment for proactive identification of at-risk customers.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
+**For Mini Project 1 (ML Pipeline):**
 - **Python 3.9+** (Python 3.13.5 recommended)
 - **Docker** (for Airflow orchestration)
 - **Java JDK 17** (for PySpark)
 - **8GB RAM** minimum (16GB recommended)
+
+**For Mini Project 2 (Kafka Pipeline):**
+- **Python 3.8+**
+- **Apache Kafka 2.6+** (or Docker)
+- **Docker & Docker Compose** (recommended for Kafka setup)
+- **Trained model from Mini Project 1**
 
 ### Installation
 
@@ -45,38 +58,66 @@ export PATH=$JAVA_HOME/bin:$PATH
 ## 🏗️ Project Structure
 
 ```
-telco-churn-production/
-├── airflow-docker/          # Airflow orchestration
-│   ├── dags/               # DAG definitions
-│   ├── docker-compose.yml  # Docker configuration
-│   └── logs/               # Airflow logs
-├── config/                  # Configuration files
-│   └── config.yaml         # Model parameters & features
-├── data/                    # Dataset storage
-│   ├── raw/                # Raw data
-│   ├── processed/          # Processed data
-│   └── predictions/        # Model predictions
-├── notebooks/               # Jupyter notebooks
-│   ├── 01_exploratory_data_analysis.ipynb
-│   ├── 02_feature_engineering.ipynb
-│   ├── 03_model_development.ipynb
-│   ├── 04_model_evaluation.ipynb
-│   ├── 05_mlflow_tracking.ipynb
-│   └── 06_model_deployment.ipynb
-├── reports/                 # Generated reports
-│   └── figures/            # Visualizations
-├── src/                     # Source code
-│   ├── pipelines/          # ML pipelines
-│   │   ├── sklearn_pipeline.py
-│   │   ├── sklearn_mlflow_pipeline.py
-│   │   ├── pyspark_pipeline.py
-│   │   └── inference_pipeline.py
-│   └── models/             # Saved models
-├── mlruns/                  # MLflow tracking data
-└── tests/                   # Unit tests
+telco-churn-project/
+│
+├── telco-churn-production/  # MINI PROJECT 1: ML Pipeline
+│   ├── airflow-docker/      # Airflow orchestration
+│   │   ├── dags/           # DAG definitions
+│   │   ├── docker-compose.yml
+│   │   └── logs/           # Airflow logs
+│   ├── config/             # Configuration files
+│   │   └── config.yaml     # Model parameters & features
+│   ├── data/               # Dataset storage
+│   │   ├── raw/            # Raw data
+│   │   ├── processed/      # Processed data
+│   │   └── predictions/    # Model predictions
+│   ├── notebooks/          # Jupyter notebooks
+│   │   ├── 01_exploratory_data_analysis.ipynb
+│   │   ├── 02_feature_engineering.ipynb
+│   │   ├── 03_model_development.ipynb
+│   │   ├── 04_model_evaluation.ipynb
+│   │   ├── 05_mlflow_tracking.ipynb
+│   │   └── 06_model_deployment.ipynb
+│   ├── reports/            # Generated reports
+│   │   └── figures/        # Visualizations
+│   ├── src/                # Source code
+│   │   ├── pipelines/      # ML pipelines
+│   │   │   ├── sklearn_pipeline.py
+│   │   │   ├── sklearn_mlflow_pipeline.py
+│   │   │   ├── pyspark_pipeline.py
+│   │   │   └── inference_pipeline.py
+│   │   └── models/         # Saved models
+│   │       └── sklearn_pipeline.pkl  # Trained model (used by Kafka consumer)
+│   ├── mlruns/             # MLflow tracking data
+│   └── tests/              # Unit tests
+│
+├── kafka/                   # MINI PROJECT 2: Kafka Streaming Pipeline
+│   ├── producer.py         # Kafka producer (streaming & batch)
+│   ├── consumer.py         # Kafka consumer with ML predictions
+│   ├── config.py           # Kafka configuration
+│   ├── test_pipeline.py    # End-to-end testing
+│   ├── test_completeness.py # Requirement verification
+│   ├── README.md           # Kafka pipeline documentation
+│   ├── CHECKLIST.md        # Implementation checklist
+│   ├── COMPLETION_SUMMARY.md # Project summary
+│   ├── requirements-kafka.txt # Kafka dependencies
+│   ├── airflow/            # Airflow DAGs for Kafka
+│   │   └── dags/
+│   │       ├── kafka_streaming_dag.py
+│   │       └── kafka_batch_dag.py
+│   ├── docs/               # Additional documentation
+│   └── screenshots/        # Visual documentation
+│
+├── docker-compose.yml       # Kafka + Zookeeper setup
+├── requirements.txt         # Complete project dependencies
+└── README.md               # This file
 ```
 
 ## 🔧 Running the Components
+
+---
+
+## MINI PROJECT 1: ML Pipeline & Model Development
 
 ### 1. Scikit-Learn Pipeline
 
@@ -164,6 +205,121 @@ docker-compose up -d
 
 **Schedule**: Weekly (configurable in DAG definition)
 
+---
+
+## MINI PROJECT 2: Kafka Streaming Pipeline
+
+### 6. Kafka Producer (Streaming Mode)
+
+Send customer data continuously for real-time predictions:
+
+```bash
+cd kafka
+
+# Start Kafka (using Docker Compose)
+docker-compose up -d
+
+# Run producer in streaming mode
+python producer.py --mode streaming --events-per-sec 10 --duration 60
+```
+
+**Features**:
+- Configurable event rate (default: 10 events/sec)
+- Continuous or time-limited streaming
+- Random customer sampling
+- JSON messages with timestamps
+
+### 7. Kafka Producer (Batch Mode)
+
+Process CSV data in chunks with checkpoint/resume:
+
+```bash
+# Run producer in batch mode
+python producer.py --mode batch --batch-size 100
+
+# Resume from checkpoint
+python producer.py --mode batch --resume
+```
+
+**Features**:
+- Configurable batch size
+- Checkpoint file creation
+- Resume capability for interrupted processing
+- Progress tracking
+
+### 8. Kafka Consumer (Streaming Mode)
+
+Consume messages and make real-time ML predictions:
+
+```bash
+# Run consumer in streaming mode (continuous)
+python consumer.py --mode streaming
+
+# Run for specific duration
+python consumer.py --mode streaming --duration 300
+```
+
+**Output**: Publishes predictions to `telco-churn-predictions` topic:
+```json
+{
+  "customerID": "7590-VHVEG",
+  "churn_probability": 0.234,
+  "prediction": "No",
+  "event_ts": "2025-10-25T10:30:45.123456",
+  "processed_ts": "2025-10-25T10:30:45.678901"
+}
+```
+
+### 9. Kafka Consumer (Batch Mode)
+
+Process messages in windows with summary statistics:
+
+```bash
+# Process 50 messages per window, 10 windows total
+python consumer.py --mode batch --window-size 50 --num-windows 10
+```
+
+**Output**:
+- Batch summary with counts and success rate
+- Predictions published to output topic
+- Processing statistics logged
+
+### 10. Full Kafka Pipeline Test
+
+Test the complete streaming pipeline:
+
+```bash
+# Quick verification
+python test_completeness.py --quick
+
+# Full test (requires Kafka running)
+python test_completeness.py
+
+# End-to-end pipeline test
+python test_pipeline.py --mode streaming --duration 20
+```
+
+### Kafka Topics & Monitoring
+
+```bash
+# View raw customer messages
+docker exec -it kafka kafka-console-consumer \
+  --bootstrap-server localhost:29092 \
+  --topic telco-raw-customers --from-beginning
+
+# View predictions
+docker exec -it kafka kafka-console-consumer \
+  --bootstrap-server localhost:29092 \
+  --topic telco-churn-predictions --from-beginning
+
+# Check consumer group status
+docker exec -it kafka kafka-consumer-groups \
+  --bootstrap-server localhost:29092 \
+  --group telco-churn-consumer-group --describe
+```
+
+---
+
 ## 🛠️ Technologies Used
 
 ### Core ML & Data Science
@@ -181,6 +337,10 @@ docker-compose up -d
 ### Experiment Tracking & Deployment
 - **MLflow 2.9** - Experiment tracking & model registry
 - **Joblib** - Model serialization
+
+### Streaming & Messaging (Mini Project 2)
+- **Apache Kafka 2.6+** - Distributed streaming platform
+- **kafka-python** - Python client for Kafka
 
 ### Orchestration & Monitoring
 - **Apache Airflow 2.10** - Workflow orchestration
@@ -279,9 +439,18 @@ pytest tests/test_pipelines.py
 
 ## 📚 Documentation
 
-- **Technical Guide**: See `reports/EXECUTIVE_SUMMARY.md`
-- **Submission Checklist**: See `SUBMISSION_CHECKLIST.md`
-- **Notebooks**: Detailed analysis in `notebooks/` directory
+### Mini Project 1 (ML Pipeline)
+- **Technical Guide**: `telco-churn-production/reports/EXECUTIVE_SUMMARY.md`
+- **Submission Checklist**: `telco-churn-production/SUBMISSION_CHECKLIST.md`
+- **Notebooks**: Detailed analysis in `telco-churn-production/notebooks/`
+
+### Mini Project 2 (Kafka Pipeline)
+- **Kafka Pipeline Guide**: `kafka/README.md`
+- **Implementation Checklist**: `kafka/CHECKLIST.md`
+- **Completion Summary**: `kafka/COMPLETION_SUMMARY.md`
+- **Quick Start**: `kafka/docs/QUICKSTART.md`
+- **Test Results**: `kafka/docs/TEST_RESULTS.md`
+- **Airflow Setup**: `kafka/docs/AIRFLOW_SETUP_GUIDE.md`
 
 ## 🤝 Contributing
 
@@ -312,6 +481,36 @@ This project is licensed under the MIT License.
 **Issue**: DAG not appearing in Airflow
 **Solution**: Check logs with `docker-compose logs` for import errors
 
+**Issue**: Kafka consumer not receiving messages (Mini Project 2)
+**Solution**:
+```bash
+# Check consumer group offset
+kafka-consumer-groups --bootstrap-server localhost:29092 \
+  --group telco-churn-consumer-group --describe
+
+# Reset to earliest if needed
+kafka-consumer-groups --bootstrap-server localhost:29092 \
+  --group telco-churn-consumer-group --reset-offsets \
+  --to-earliest --all-topics --execute
+```
+
+## 🎯 Project Highlights
+
+### Mini Project 1: Advanced ML Pipeline
+- ✅ Multiple ML frameworks (Scikit-learn, XGBoost, PySpark)
+- ✅ MLflow experiment tracking & model registry
+- ✅ Airflow orchestration for automated retraining
+- ✅ Comprehensive notebooks with EDA & feature engineering
+- ✅ Production-ready inference pipeline
+
+### Mini Project 2: Real-Time Streaming System
+- ✅ Kafka producer with streaming & batch modes
+- ✅ Real-time ML predictions via Kafka consumer
+- ✅ Checkpoint/resume for reliable batch processing
+- ✅ Dead letter queue for error handling
+- ✅ Complete testing & verification scripts
+- ✅ Docker-based infrastructure setup
+
 ## 📧 Contact
 
-For questions or issues, please open an issue on GitHub or contact me.
+For questions or issues, please open an issue on GitHub.
