@@ -51,8 +51,7 @@ class MLflowTracker:
         if self.run:
             mlflow.sklearn.log_model(model, artifact_path)
         else:
-            print("Error: No active run. Please start an experiment first.
-")
+            print("Error: No active run. Please start an experiment first.")
     def register_model(self, model_uri: str, name: str):
         """Registers a model in the MLflow Model Registry."""
         try:

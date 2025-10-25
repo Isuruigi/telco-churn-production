@@ -272,7 +272,7 @@ This initiative aligns with strategic objectives of **revenue growth**, **custom
 
 ---
 
-**Prepared by**: Data Science Team
+**Prepared by**: Isuru Chathuranga
 **Date**: October 2025
 **Version**: 1.0
 **Classification**: Internal Use
